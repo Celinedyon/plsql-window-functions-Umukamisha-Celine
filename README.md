@@ -1,9 +1,8 @@
 # PL/SQL Window Functions - Celine Baby Shop Analysis
 
 **Student:** Umukamisha Celine  
-**ID:** 27400  
-**Date:** September 23, 2025  
-**Course:** Database Development with PL/SQL (INSY 8311)  
+**ID:** 27400   
+**Course:** Database Development with PL/SQL  
 **Assignment:** Individual Assignment I - Window Functions Mastery Project
 
 ## Step 1: Problem Definition
