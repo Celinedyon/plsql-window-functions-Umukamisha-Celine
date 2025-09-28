@@ -123,7 +123,7 @@ CREATE TABLE transactions (
 |--------------|-------------|--------------|-------------|---------------|
 | CUSTOMERS | TRANSACTIONS | One-to-Many (1:M) | customer_id | One customer can make multiple purchases |
 | PRODUCTS | TRANSACTIONS | One-to-Many (1:M) | product_id | One product can be sold in multiple transactions |
-
+ 
 ### CELINE BABY SHOP DATABASE STRUCTURE
 ### ENTITY RELATIONSHIP DIAGRAM
 
@@ -173,7 +173,7 @@ v Many Transactions
 #### Query 1.1: ROW_NUMBER() Top customers by revenue
 **Use case:** Identify top Number customers by revenue for VIP program
 
-![ROW_NUMBER Screenshot](Screenshot/Top customers with ROW_NUMBER.png)
+![ROW_NUMBER Screenshot](Screenshot/ranking_row_number.png)
 
 **Interpretation:** ROW_NUMBER() assigns unique sequential ranks to customers by revenue, enabling precise top-N selection. Customer "Uwizeye" ranks #1 with highest total spending, making them prime candidate for VIP program. This ranking helps identify exact customer hierarchy without ties.
 
