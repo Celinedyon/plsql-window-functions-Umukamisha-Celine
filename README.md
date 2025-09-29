@@ -387,7 +387,30 @@ ORDER BY c.customer_name, t.sale_date;
 
 #### Query 3.3: Combined LAG() and LEAD() Complete navigation analysis
 ```sql
-
+SELECT 
+    c.customer_name,
+    c.region,
+    t.sale_date,
+    t.total_amount,
+    LAG(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id
+        ORDER BY t.sale_date
+    ) as previous_purchase,
+    LEAD(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id
+        ORDER BY t.sale_date
+    ) as next_purchase,
+    t.sale_date - LAG(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id
+        ORDER BY t.sale_date
+    ) as days_since_last,
+    LEAD(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id
+        ORDER BY t.sale_date
+    ) - t.sale_date as days_until_next
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+ORDER BY c.customer_name, t.sale_date;
 ```
 
 **Use case:** Customer purchase interval analysis for retention strategies
