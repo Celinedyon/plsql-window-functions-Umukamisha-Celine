@@ -162,7 +162,7 @@ v Many Transactions
 ```
 
 **Relationship Description:**
-• CUSTOMERS (1) to TRANSACTIONS (Many): One customer can make multiple purchases  
+• CUSTOMERS (1) to TRANSACTIONS (Many): One customer can make multiple purchases
 • PRODUCTS (1) to TRANSACTIONS (Many): One product can be sold in multiple transactions  
 • TRANSACTIONS serves as the junction table linking customers and products
 
@@ -180,14 +180,14 @@ v Many Transactions
 #### Query 1.2: RANK() Product ranking with ties allowed
 **Use case:** Rank products by sales volume, handling ties appropriately
 
-![RANK and DENSE_RANK Screenshot](Screenshot/rank%20denserank.png)
+![RANK and DENSE_RANK Screenshot](Screenshot/rank%20dense.png)
 
 **Interpretation:** RANK() handles tied products by giving them the same rank and skipping subsequent ranks, while DENSE_RANK() doesn't skip ranks. Products with identical sales volumes receive equal ranking, crucial for fair performance evaluation and inventory decisions.
 
 #### Query 1.3: PERCENT_RANK() Customer percentile ranking
 **Use case:** Segment customers into percentiles for marketing campaigns
 
-![PERCENT_RANK Screenshot](Screenshot/percent%20rank.png)
+![PERCENT_RANK Screenshot](Screenshot/percent%20rank.PNG)
 
 **Interpretation:** PERCENT_RANK() creates percentile-based customer segmentation from 0 to 1, enabling precise marketing targeting. Top 25% customers represent highest-value segment for premium campaigns, while bottom 25% need retention strategies to increase engagement.
 
@@ -196,21 +196,21 @@ v Many Transactions
 #### Query 2.1: SUM() OVER() Running totals and cumulative analysis
 **Use case:** Track cumulative sales performance over time
 
-![SUM OVER Screenshot](Screenshot/aggregate%20sum.png)
+![SUM OVER Screenshot](Screenshot/aggregate%20sum.pn)
 
 **Interpretation:** Running totals show cumulative revenue growth over time, essential for cash flow monitoring. ROWS frame processes individual transactions sequentially, while RANGE frame handles same-date transactions together, providing different analytical perspectives for business performance tracking.
 
 #### Query 2.2: AVG() OVER() Moving averages with ROWS vs RANGE
 **Use case:** Smooth out daily sales fluctuations for trend analysis
 
-![AVG OVER Screenshot](Screenshot/aggregate%20avg.PNG)
+![AVG OVER Screenshot](Screenshot/aggregate%20avg.png)
 
 **Interpretation:** ROWS-based moving averages smooth transaction-level volatility by averaging fixed number of records, while RANGE-based averages use time periods regardless of transaction count. Three-day averages reveal underlying sales trends by filtering out daily fluctuations.
 
 #### Query 2.3: MIN() and MAX() OVER() Extreme value analysis
 **Use case:** Identify minimum and maximum sales within time periods
 
-![MIN MAX Screenshot](Screenshot/min%20max.png)
+![MIN MAX Screenshot](Screenshot/min%20max.PNG)
 
 **Interpretation:** Regional MIN/MAX analysis tracks extreme values within each region over time, helping identify best and worst performing transactions. This reveals regional sales patterns and helps set realistic targets based on historical performance ranges.
 
@@ -219,14 +219,14 @@ v Many Transactions
 #### Query 3.1: LAG() Previous period comparison
 **Use case:** Calculate month-over-month growth percentages
 
-![LAG Growth Screenshot](Screenshot/navigation%20lag.png)
+![LAG Growth Screenshot](Screenshot/navigation%20lag.PNG)
 
 **Interpretation:** LAG() enables month-over-month growth calculations by accessing previous month's revenue within current row. Growth percentages reveal business momentum trends, with positive values indicating expansion and negative values showing contraction requiring management attention.
 
 #### Query 3.2: LEAD() Forward-looking analysis
 **Use case:** Analyze upcoming purchase patterns and customer behavior
 
-![LEAD Patterns Screenshot](Screenshot/lead%20patterns.png)
+![LEAD Patterns Screenshot](Screenshot/lead%20patterns.PNG)
 
 **Interpretation:** LEAD() reveals customer purchase frequency by showing days between consecutive purchases. Customers with consistent short intervals represent high engagement, while long gaps indicate potential churn risks requiring retention campaigns.
 
@@ -242,21 +242,21 @@ v Many Transactions
 #### Query 4.1: NTILE(4) Customer quartile segmentation
 **Use case:** Segment customers into quartiles for marketing campaigns
 
-![NTILE Quartiles Screenshot](Screenshot/ntile%20quartiles.png)
+![NTILE Quartiles Screenshot](Screenshot/ntile%20quartiles.PNG)
 
 **Interpretation:** NTILE(4) divides customers into equal-sized quartiles based on spending, creating balanced segments for targeted marketing. Premium customers (Q4) receive exclusive offers, while Entry Level (Q1) customers get acquisition-focused campaigns to increase engagement.
 
 #### Query 4.2: CUME_DIST() Cumulative distribution analysis
 **Use case:** Percentile ranking for performance benchmarking
 
-![CUME_DIST Screenshot](Screenshot/cumedist%20percentiles.png)
+![CUME_DIST Screenshot](Screenshot/cumedist%20percentiles.PNG)
 
 **Interpretation:** CUME_DIST() provides precise percentile rankings from 0 to 1, showing what percentage of products perform below each item. Products in top 20% (≥0.8) are star performers deserving premium shelf space and marketing investment.
 
 #### Query 4.3: Combined NTILE() and CUME_DIST() Complete distribution analysis
 **Use case:** Comprehensive customer segmentation combining quartiles and percentiles
 
-![Combined Distribution Screenshot](Screenshot/distribution%20combined.png)
+![Combined Distribution Screenshot](Screenshot/distribution%20combined.PNG)
 
 **Interpretation:** Combined distribution analysis reveals customer behavior patterns across multiple dimensions. High-spending, high-frequency customers in Q4 quartiles represent ideal customer profile, while mismatched quartiles (high spend, low frequency) indicate different engagement strategies needed.
 
@@ -264,7 +264,7 @@ v Many Transactions
 **Summary analysis combining all window function categories**
 **Use case:** Executive dashboard with complete analytical overview
 
-![Comprehensive Business Summary Screenshot](Screenshot/comprehensivebusiness%20summary.png)
+![Comprehensive Business Summary Screenshot](Screenshot/comprehensivebusiness%20summary.PNG)
 
 **Interpretation:** This executive summary demonstrates all four window function categories working together to provide complete regional performance analysis. Rankings identify top regions, aggregates show cumulative impact, and distributions reveal relative performance positioning for strategic decision-making.
 
