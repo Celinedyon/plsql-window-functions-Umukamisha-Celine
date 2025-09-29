@@ -180,7 +180,7 @@ v Many Transactions
 #### Query 1.2: RANK() Product ranking with ties allowed
 **Use case:** Rank products by sales volume, handling ties appropriately
 
-![RANK and DENSE_RANK Screenshot](Screenshot/rank%20dense.png)
+![RANK and DENSE_RANK Screenshot](Screenshot/rank%20dense.PNG)
 
 **Interpretation:** RANK() handles tied products by giving them the same rank and skipping subsequent ranks, while DENSE_RANK() doesn't skip ranks. Products with identical sales volumes receive equal ranking, crucial for fair performance evaluation and inventory decisions.
 
@@ -196,14 +196,14 @@ v Many Transactions
 #### Query 2.1: SUM() OVER() Running totals and cumulative analysis
 **Use case:** Track cumulative sales performance over time
 
-![SUM OVER Screenshot](Screenshot/aggregate%20sum.pn)
+![SUM OVER Screenshot](Screenshot/aggregate%20sum.PNG)
 
 **Interpretation:** Running totals show cumulative revenue growth over time, essential for cash flow monitoring. ROWS frame processes individual transactions sequentially, while RANGE frame handles same-date transactions together, providing different analytical perspectives for business performance tracking.
 
 #### Query 2.2: AVG() OVER() Moving averages with ROWS vs RANGE
 **Use case:** Smooth out daily sales fluctuations for trend analysis
 
-![AVG OVER Screenshot](Screenshot/aggregate%20avg.png)
+![AVG OVER Screenshot](Screenshot/aggregate%20avg.PNG)
 
 **Interpretation:** ROWS-based moving averages smooth transaction-level volatility by averaging fixed number of records, while RANGE-based averages use time periods regardless of transaction count. Three-day averages reveal underlying sales trends by filtering out daily fluctuations.
 
@@ -233,7 +233,7 @@ v Many Transactions
 #### Query 3.3: Combined LAG() and LEAD() Complete navigation analysis
 **Use case:** Customer purchase interval analysis for retention strategies
 
-![LAG LEAD Combined Screenshot](Screenshot/laglead%20combined.png)
+![LAG LEAD Combined Screenshot](Screenshot/laglead%20combined.PNG)
 
 **Interpretation:** Combined LAG/LEAD analysis provides complete customer purchase timeline view, showing both backward and forward purchase intervals. This reveals customer loyalty patterns and helps predict optimal timing for targeted marketing campaigns.
 
