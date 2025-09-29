@@ -392,18 +392,22 @@ SELECT
     c.region,
     t.sale_date,
     t.total_amount,
+    -- Get the previous purchase date for each customer
     LAG(t.sale_date, 1) OVER (
         PARTITION BY c.customer_id
         ORDER BY t.sale_date
     ) as previous_purchase,
+    -- Get the next purchase date for each customer
     LEAD(t.sale_date, 1) OVER (
         PARTITION BY c.customer_id
         ORDER BY t.sale_date
     ) as next_purchase,
+    -- Calculate days since last purchase
     t.sale_date - LAG(t.sale_date, 1) OVER (
         PARTITION BY c.customer_id
         ORDER BY t.sale_date
     ) as days_since_last,
+    -- Calculate days until next purchase
     LEAD(t.sale_date, 1) OVER (
         PARTITION BY c.customer_id
         ORDER BY t.sale_date
