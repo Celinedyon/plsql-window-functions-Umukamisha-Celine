@@ -171,6 +171,19 @@ v Many Transactions
 ### CATEGORY 1: RANKING FUNCTIONS
 
 #### Query 1.1: ROW_NUMBER() Top customers by revenue
+```sql
+SELECT 
+    c.customer_name,
+    c.region,
+    SUM(t.total_amount) as total_revenue,
+    -- ROW_NUMBER() assigns unique sequential numbers (1, 2, 3...) even for tied values
+    ROW_NUMBER() OVER (ORDER BY SUM(t.total_amount) DESC) as customer_rank
+FROM customers c
+JOIN transactions t ON c.customer_id = t.customer_id
+GROUP BY c.customer_id, c.customer_name, c.region
+ORDER BY customer_rank
+LIMIT 10;
+```
 **Use case:** Identify top Number customers by revenue for VIP program
 
 ![ROW_NUMBER Screenshot](Screenshot/row%20number.PNG))
@@ -178,6 +191,21 @@ v Many Transactions
 **Interpretation:** ROW_NUMBER() assigns unique sequential ranks to customers by revenue, enabling precise top-N selection. Customer "Uwizeye" ranks #1 with highest total spending, making them prime candidate for VIP program. This ranking helps identify exact customer hierarchy without ties.
 
 #### Query 1.2: RANK() Product ranking with ties allowed
+```sql
+SELECT 
+    p.product_name,
+    p.category,
+    SUM(t.quantity) as total_sold,
+    -- RANK() gives same rank to tied values and skips subsequent ranks
+    RANK() OVER (ORDER BY SUM(t.quantity) DESC) as product_rank,
+    -- DENSE_RANK() gives same rank to tied values but doesn't skip ranks
+    DENSE_RANK() OVER (ORDER BY SUM(t.quantity) DESC) as dense_rank
+FROM products p
+JOIN transactions t ON p.product_id = t.product_id
+GROUP BY p.product_id, p.product_name, p.category
+ORDER BY total_sold DESC;
+
+```
 **Use case:** Rank products by sales volume, handling ties appropriately
 
 ![RANK and DENSE_RANK Screenshot](Screenshot/rank%20denserank.PNG)
@@ -185,6 +213,25 @@ v Many Transactions
 **Interpretation:** RANK() handles tied products by giving them the same rank and skipping subsequent ranks, while DENSE_RANK() doesn't skip ranks. Products with identical sales volumes receive equal ranking, crucial for fair performance evaluation and inventory decisions.
 
 #### Query 1.3: PERCENT_RANK() Customer percentile ranking
+```sql
+SELECT 
+    c.customer_name,
+    c.region,
+    SUM(t.total_amount) as total_spent,
+    -- Calculate percentile rank (0 = lowest, 1 = highest)
+    PERCENT_RANK() OVER (ORDER BY SUM(t.total_amount) DESC) as percentile_rank,
+    CASE 
+        WHEN PERCENT_RANK() OVER (ORDER BY SUM(t.total_amount) DESC) <= 0.25 THEN 'Top 25%'
+        WHEN PERCENT_RANK() OVER (ORDER BY SUM(t.total_amount) DESC) <= 0.50 THEN 'Top 50%' 
+        WHEN PERCENT_RANK() OVER (ORDER BY SUM(t.total_amount) DESC) <= 0.75 THEN 'Top 75%'
+        ELSE 'Bottom 25%'
+    END as customer_segment
+FROM customers c
+JOIN transactions t ON c.customer_id = t.customer_id
+GROUP BY c.customer_id, c.customer_name, c.region
+ORDER BY total_spent DESC;
+
+```
 **Use case:** Segment customers into percentiles for marketing campaigns
 
 ![PERCENT_RANK Screenshot](Screenshot/percent%20rank.PNG)
@@ -194,6 +241,23 @@ v Many Transactions
 ### CATEGORY 2: AGGREGATE FUNCTIONS
 
 #### Query 2.1: SUM() OVER() Running totals and cumulative analysis
+```sql
+SELECT 
+    t.sale_date,
+    t.total_amount,
+    -- Running total using ROWS frame (accumulates individual records sequentially)
+    SUM(t.total_amount) OVER (
+        ORDER BY t.sale_date
+        ROWS UNBOUNDED PRECEDING
+    ) as running_total_rows,
+    -- Running total using RANGE frame (accumulates based on date values, handles ties)
+    SUM(t.total_amount) OVER (
+        ORDER BY t.sale_date
+        RANGE UNBOUNDED PRECEDING
+    ) as running_total_range
+FROM transactions t
+ORDER BY t.sale_date;
+```
 **Use case:** Track cumulative sales performance over time
 
 ![SUM OVER Screenshot](Screenshot/aggregate%20sum.PNG)
@@ -201,6 +265,23 @@ v Many Transactions
 **Interpretation:** Running totals show cumulative revenue growth over time, essential for cash flow monitoring. ROWS frame processes individual transactions sequentially, while RANGE frame handles same-date transactions together, providing different analytical perspectives for business performance tracking.
 
 #### Query 2.2: AVG() OVER() Moving averages with ROWS vs RANGE
+```sql
+SELECT 
+    t.sale_date,
+    t.total_amount,
+    -- 3-transaction moving average using ROWS frame (processes fixed number of records)
+    AVG(t.total_amount) OVER (
+        ORDER BY t.sale_date
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) as three_transaction_avg,
+    -- Date-based moving average using RANGE frame (processes based on date values)
+    AVG(t.total_amount) OVER (
+        ORDER BY t.sale_date
+        RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND CURRENT ROW
+    ) as three_day_avg
+FROM transactions t
+ORDER BY t.sale_date;
+```
 **Use case:** Smooth out daily sales fluctuations for trend analysis
 
 ![AVG OVER Screenshot](Screenshot/aggregate%20avg.PNG)
@@ -208,6 +289,27 @@ v Many Transactions
 **Interpretation:** ROWS-based moving averages smooth transaction-level volatility by averaging fixed number of records, while RANGE-based averages use time periods regardless of transaction count. Three-day averages reveal underlying sales trends by filtering out daily fluctuations.
 
 #### Query 2.3: MIN() and MAX() OVER() Extreme value analysis
+``` sql
+SELECT 
+    t.sale_date,
+    t.total_amount,
+    c.region,
+    -- Minimum transaction amount within each region so far (cumulative)
+    MIN(t.total_amount) OVER (
+        PARTITION BY c.region 
+        ORDER BY t.sale_date
+        ROWS UNBOUNDED PRECEDING
+    ) as regional_min_so_far,
+    -- Maximum transaction amount within each region so far (cumulative)
+    MAX(t.total_amount) OVER (
+        PARTITION BY c.region 
+        ORDER BY t.sale_date
+        ROWS UNBOUNDED PRECEDING
+    ) as regional_max_so_far
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+ORDER BY c.region, t.sale_date;
+```
 **Use case:** Identify minimum and maximum sales within time periods
 
 ![MIN MAX Screenshot](Screenshot/min%20max.PNG)
@@ -217,6 +319,29 @@ v Many Transactions
 ### CATEGORY 3: NAVIGATION FUNCTIONS
 
 #### Query 3.1: LAG() Previous period comparison
+```sql
+WITH monthly_sales AS (
+    SELECT 
+        DATE_TRUNC('month', sale_date) as month,
+        SUM(total_amount) as monthly_revenue
+    FROM transactions
+    GROUP BY DATE_TRUNC('month', sale_date)
+)
+SELECT 
+    month,
+    monthly_revenue,
+    LAG(monthly_revenue, 1) OVER (ORDER BY month) as previous_month,
+    CASE 
+        WHEN LAG(monthly_revenue, 1) OVER (ORDER BY month) IS NOT NULL
+        THEN ROUND(
+            ((monthly_revenue - LAG(monthly_revenue, 1) OVER (ORDER BY month)) * 100.0 / 
+             LAG(monthly_revenue, 1) OVER (ORDER BY month)), 2
+        )
+        ELSE NULL
+    END as mom_growth_percent
+FROM monthly_sales
+ORDER BY month;
+```
 **Use case:** Calculate month-over-month growth percentages
 
 ![LAG Growth Screenshot](Screenshot/navigation%20lag.PNG)
@@ -224,6 +349,36 @@ v Many Transactions
 **Interpretation:** LAG() enables month-over-month growth calculations by accessing previous month's revenue within current row. Growth percentages reveal business momentum trends, with positive values indicating expansion and negative values showing contraction requiring management attention.
 
 #### Query 3.2: LEAD() Forward-looking analysis
+```sql
+SELECT 
+    c.customer_name,
+    c.region,
+    t.sale_date,
+    t.total_amount,
+    -- Get previous purchase date for each customer
+    LAG(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id 
+        ORDER BY t.sale_date
+    ) as previous_purchase,
+    -- Get next purchase date for each customer
+    LEAD(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id 
+        ORDER BY t.sale_date
+    ) as next_purchase,
+    -- Calculate days since last purchase
+    t.sale_date - LAG(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id 
+        ORDER BY t.sale_date
+    ) as days_since_last,
+    -- Calculate days until next purchase
+    LEAD(t.sale_date, 1) OVER (
+        PARTITION BY c.customer_id 
+        ORDER BY t.sale_date
+    ) - t.sale_date as days_until_next
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+ORDER BY c.customer_name, t.sale_date;
+```
 **Use case:** Analyze upcoming purchase patterns and customer behavior
 
 ![LEAD Patterns Screenshot](Screenshot/lead%20patterns.PNG)
@@ -231,6 +386,10 @@ v Many Transactions
 **Interpretation:** LEAD() reveals customer purchase frequency by showing days between consecutive purchases. Customers with consistent short intervals represent high engagement, while long gaps indicate potential churn risks requiring retention campaigns.
 
 #### Query 3.3: Combined LAG() and LEAD() Complete navigation analysis
+```sql
+
+```
+
 **Use case:** Customer purchase interval analysis for retention strategies
 
 ![LAG LEAD Combined Screenshot](Screenshot/laglead%20combined.PNG)
@@ -240,6 +399,24 @@ v Many Transactions
 ### CATEGORY 4: DISTRIBUTION FUNCTIONS
 
 #### Query 4.1: NTILE(4) Customer quartile segmentation
+```sql
+SELECT 
+    c.customer_name,
+    c.region,
+    SUM(t.total_amount) as total_spent,
+    COUNT(t.transaction_id) as transaction_count,
+    NTILE(4) OVER (ORDER BY SUM(t.total_amount)) as spending_quartile,
+    CASE 
+        WHEN NTILE(4) OVER (ORDER BY SUM(t.total_amount)) = 4 THEN 'Premium Customer'
+        WHEN NTILE(4) OVER (ORDER BY SUM(t.total_amount)) = 3 THEN 'High Value'
+        WHEN NTILE(4) OVER (ORDER BY SUM(t.total_amount)) = 2 THEN 'Medium Value'
+        ELSE 'Entry Level'
+    END as customer_segment
+FROM customers c
+JOIN transactions t ON c.customer_id = t.customer_id
+GROUP BY c.customer_id, c.customer_name, c.region
+ORDER BY total_spent DESC;
+```
 **Use case:** Segment customers into quartiles for marketing campaigns
 
 ![NTILE Quartiles Screenshot](Screenshot/ntile%20quartiles.PNG)
@@ -247,6 +424,25 @@ v Many Transactions
 **Interpretation:** NTILE(4) divides customers into equal-sized quartiles based on spending, creating balanced segments for targeted marketing. Premium customers (Q4) receive exclusive offers, while Entry Level (Q1) customers get acquisition-focused campaigns to increase engagement.
 
 #### Query 4.2: CUME_DIST() Cumulative distribution analysis
+```sql
+SELECT 
+    p.product_name,
+    p.category,
+    SUM(t.total_amount) as total_revenue,
+    SUM(t.quantity) as total_quantity,
+    CUME_DIST() OVER (ORDER BY SUM(t.total_amount)) as revenue_percentile,
+    CUME_DIST() OVER (ORDER BY SUM(t.quantity)) as quantity_percentile,
+    CASE 
+        WHEN CUME_DIST() OVER (ORDER BY SUM(t.total_amount)) >= 0.8 THEN 'Top 20%'
+        WHEN CUME_DIST() OVER (ORDER BY SUM(t.total_amount)) >= 0.6 THEN 'Top 40%' 
+        WHEN CUME_DIST() OVER (ORDER BY SUM(t.total_amount)) >= 0.4 THEN 'Middle 40%'
+        ELSE 'Bottom 40%'
+    END as performance_tier
+FROM products p
+JOIN transactions t ON p.product_id = t.product_id
+GROUP BY p.product_id, p.product_name, p.category
+ORDER BY total_revenue DESC;
+```
 **Use case:** Percentile ranking for performance benchmarking
 
 ![CUME_DIST Screenshot](Screenshot/cumedist%20percentiles.PNG)
@@ -254,6 +450,33 @@ v Many Transactions
 **Interpretation:** CUME_DIST() provides precise percentile rankings from 0 to 1, showing what percentage of products perform below each item. Products in top 20% (≥0.8) are star performers deserving premium shelf space and marketing investment.
 
 #### Query 4.3: Combined NTILE() and CUME_DIST() Complete distribution analysis
+``` sql
+WITH customer_metrics AS (
+    SELECT 
+        c.customer_id,
+        c.customer_name,
+        c.region,
+        c.baby_age_months,
+        SUM(t.total_amount) as total_spent,
+        COUNT(t.transaction_id) as frequency,
+        AVG(t.total_amount) as avg_transaction
+    FROM customers c
+    JOIN transactions t ON c.customer_id = t.customer_id
+    GROUP BY c.customer_id, c.customer_name, c.region, c.baby_age_months
+)
+SELECT 
+    customer_name,
+    region,
+    baby_age_months,
+    frequency,
+    ROUND(avg_transaction::numeric, 2) as avg_transaction,
+    NTILE(4) OVER (ORDER BY total_spent) as spending_quartile,
+    NTILE(4) OVER (ORDER BY frequency) as frequency_quartile,
+    ROUND(CUME_DIST() OVER (ORDER BY total_spent)::numeric, 3) as spending_percentile,
+    ROUND(CUME_DIST() OVER (ORDER BY frequency)::numeric, 3) as frequency_percentile
+FROM customer_metrics
+ORDER BY total_spent DESC;
+```
 **Use case:** Comprehensive customer segmentation combining quartiles and percentiles
 
 ![Combined Distribution Screenshot](Screenshot/distribution%20combined.PNG)
@@ -262,6 +485,28 @@ v Many Transactions
 
 ### COMPREHENSIVE BUSINESS SUMMARY QUERY
 **Summary analysis combining all window function categories**
+```sql
+SELECT 
+    c.region,
+    COUNT(DISTINCT c.customer_id) as customers,
+    COUNT(t.transaction_id) as transactions,
+    SUM(t.total_amount) as total_revenue,
+    -- Rank regions by total revenue (1 = highest revenue)
+    RANK() OVER (ORDER BY SUM(t.total_amount) DESC) as revenue_rank,
+    -- Cumulative revenue running total across all regions
+    SUM(SUM(t.total_amount)) OVER (
+        ORDER BY SUM(t.total_amount) DESC
+        ROWS UNBOUNDED PRECEDING
+    ) as cumulative_revenue,
+    -- Divide regions into performance tiers (1=top, 3=bottom)
+    NTILE(3) OVER (ORDER BY SUM(t.total_amount)) as performance_tier,
+    -- Calculate percentile position of each region
+    ROUND(CUME_DIST() OVER (ORDER BY SUM(t.total_amount))::numeric, 3) as percentile
+FROM customers c
+JOIN transactions t ON c.customer_id = t.customer_id
+GROUP BY c.region
+ORDER BY total_revenue DESC;
+```
 **Use case:** Executive dashboard with complete analytical overview
 
 ![Comprehensive Business Summary Screenshot](Screenshot/comprehensivebusiness%20summary.PNG)
