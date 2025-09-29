@@ -173,7 +173,7 @@ v Many Transactions
 #### Query 1.1: ROW_NUMBER() Top customers by revenue
 **Use case:** Identify top Number customers by revenue for VIP program
 
-![Screeshot](Screenshot/row_number.png)
+![Screeshot](Screenshot/row%20number.png)
 
 **Interpretation:** ROW_NUMBER() assigns unique sequential ranks to customers by revenue, enabling precise top-N selection. Customer "Uwizeye" ranks #1 with highest total spending, making them prime candidate for VIP program. This ranking helps identify exact customer hierarchy without ties.
 
