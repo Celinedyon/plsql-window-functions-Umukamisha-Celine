@@ -173,7 +173,7 @@ v Many Transactions
 #### Query 1.1: ROW_NUMBER() Top customers by revenue
 **Use case:** Identify top Number customers by revenue for VIP program
 
-![ROW_NUMBER Screenshot](Screenshot/ranking_row_number.png)
+![ROW_NUMBER Screenshot]([ranking_row_number.png](https://github.com/Celinedyon/plsql-window-functions-Umukamisha-Celine/blob/main/Screenshot/row%20number.PNG))
 
 **Interpretation:** ROW_NUMBER() assigns unique sequential ranks to customers by revenue, enabling precise top-N selection. Customer "Uwizeye" ranks #1 with highest total spending, making them prime candidate for VIP program. This ranking helps identify exact customer hierarchy without ties.
 
