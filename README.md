@@ -180,7 +180,7 @@ v Many Transactions
 #### Query 1.2: RANK() Product ranking with ties allowed
 **Use case:** Rank products by sales volume, handling ties appropriately
 
-![RANK and DENSE_RANK Screenshot](Screenshot/ranking_rank_dense_rank.png)
+![RANK and DENSE_RANK Screenshot](Screenshot/ranking%20rank%20dense%20rank.png)
 
 **Interpretation:** RANK() handles tied products by giving them the same rank and skipping subsequent ranks, while DENSE_RANK() doesn't skip ranks. Products with identical sales volumes receive equal ranking, crucial for fair performance evaluation and inventory decisions.
 
