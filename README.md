@@ -123,7 +123,7 @@ CREATE TABLE transactions (
 |--------------|-------------|--------------|-------------|---------------|
 | CUSTOMERS | TRANSACTIONS | One-to-Many (1:M) | customer_id | One customer can make multiple purchases |
 | PRODUCTS | TRANSACTIONS | One-to-Many (1:M) | product_id | One product can be sold in multiple transactions |
- 
+
 ### CELINE BABY SHOP DATABASE STRUCTURE
 ### ENTITY RELATIONSHIP DIAGRAM
 
@@ -173,21 +173,21 @@ v Many Transactions
 #### Query 1.1: ROW_NUMBER() Top customers by revenue
 **Use case:** Identify top Number customers by revenue for VIP program
 
-![Screeshot](Screenshot/row%20number.png)
+<img src="Screenshot/ranking_row_number.png" alt="ROW_NUMBER Screenshot" width="800">
 
 **Interpretation:** ROW_NUMBER() assigns unique sequential ranks to customers by revenue, enabling precise top-N selection. Customer "Uwizeye" ranks #1 with highest total spending, making them prime candidate for VIP program. This ranking helps identify exact customer hierarchy without ties.
 
 #### Query 1.2: RANK() Product ranking with ties allowed
 **Use case:** Rank products by sales volume, handling ties appropriately
 
-![RANK and DENSE_RANK Screenshot](Screenshot/ranking_rank_dense_rank.png)
+<img src="Screenshot/ranking_rank_dense_rank.png" alt="RANK and DENSE_RANK Screenshot" width="800">
 
 **Interpretation:** RANK() handles tied products by giving them the same rank and skipping subsequent ranks, while DENSE_RANK() doesn't skip ranks. Products with identical sales volumes receive equal ranking, crucial for fair performance evaluation and inventory decisions.
 
 #### Query 1.3: PERCENT_RANK() Customer percentile ranking
 **Use case:** Segment customers into percentiles for marketing campaigns
 
-![PERCENT_RANK Screenshot](Screenshot/ranking_percent_rank.png)
+<img src="Screenshot/ranking_percent_rank.png" alt="PERCENT_RANK Screenshot" width="800">
 
 **Interpretation:** PERCENT_RANK() creates percentile-based customer segmentation from 0 to 1, enabling precise marketing targeting. Top 25% customers represent highest-value segment for premium campaigns, while bottom 25% need retention strategies to increase engagement.
 
@@ -196,21 +196,21 @@ v Many Transactions
 #### Query 2.1: SUM() OVER() Running totals and cumulative analysis
 **Use case:** Track cumulative sales performance over time
 
-![SUM OVER Screenshot](Screenshot/aggregate_sum_running_totals.png)
+<img src="Screenshot/aggregate_sum_running_totals.png" alt="SUM OVER Screenshot" width="800">
 
 **Interpretation:** Running totals show cumulative revenue growth over time, essential for cash flow monitoring. ROWS frame processes individual transactions sequentially, while RANGE frame handles same-date transactions together, providing different analytical perspectives for business performance tracking.
 
 #### Query 2.2: AVG() OVER() Moving averages with ROWS vs RANGE
 **Use case:** Smooth out daily sales fluctuations for trend analysis
 
-![AVG OVER Screenshot](Screenshot/aggregate_avg_moving_averages.png)
+<img src="Screenshot/aggregate_avg_moving_averages.png" alt="AVG OVER Screenshot" width="800">
 
 **Interpretation:** ROWS-based moving averages smooth transaction-level volatility by averaging fixed number of records, while RANGE-based averages use time periods regardless of transaction count. Three-day averages reveal underlying sales trends by filtering out daily fluctuations.
 
 #### Query 2.3: MIN() and MAX() OVER() Extreme value analysis
 **Use case:** Identify minimum and maximum sales within time periods
 
-![MIN MAX Screenshot](Screenshot/aggregate_min_max_analysis.png)
+<img src="Screenshot/aggregate_min_max_analysis.png" alt="MIN MAX Screenshot" width="800">
 
 **Interpretation:** Regional MIN/MAX analysis tracks extreme values within each region over time, helping identify best and worst performing transactions. This reveals regional sales patterns and helps set realistic targets based on historical performance ranges.
 
@@ -219,21 +219,21 @@ v Many Transactions
 #### Query 3.1: LAG() Previous period comparison
 **Use case:** Calculate month-over-month growth percentages
 
-![LAG Growth Screenshot](Screenshot/navigation_lag_growth.png)
+<img src="Screenshot/navigation_lag_growth.png" alt="LAG Growth Screenshot" width="800">
 
 **Interpretation:** LAG() enables month-over-month growth calculations by accessing previous month's revenue within current row. Growth percentages reveal business momentum trends, with positive values indicating expansion and negative values showing contraction requiring management attention.
 
 #### Query 3.2: LEAD() Forward-looking analysis
 **Use case:** Analyze upcoming purchase patterns and customer behavior
 
-![LEAD Patterns Screenshot](Screenshot/navigation_lead_patterns.png)
+<img src="Screenshot/navigation_lead_patterns.png" alt="LEAD Patterns Screenshot" width="800">
 
 **Interpretation:** LEAD() reveals customer purchase frequency by showing days between consecutive purchases. Customers with consistent short intervals represent high engagement, while long gaps indicate potential churn risks requiring retention campaigns.
 
 #### Query 3.3: Combined LAG() and LEAD() Complete navigation analysis
 **Use case:** Customer purchase interval analysis for retention strategies
 
-![LAG LEAD Combined Screenshot](Screenshot/navigation_lag_lead_combined.png)
+<img src="Screenshot/navigation_lag_lead_combined.png" alt="LAG LEAD Combined Screenshot" width="800">
 
 **Interpretation:** Combined LAG/LEAD analysis provides complete customer purchase timeline view, showing both backward and forward purchase intervals. This reveals customer loyalty patterns and helps predict optimal timing for targeted marketing campaigns.
 
@@ -242,21 +242,21 @@ v Many Transactions
 #### Query 4.1: NTILE(4) Customer quartile segmentation
 **Use case:** Segment customers into quartiles for marketing campaigns
 
-![NTILE Quartiles Screenshot](Screenshot/distribution_ntile_quartiles.png)
+<img src="Screenshot/distribution_ntile_quartiles.png" alt="NTILE Quartiles Screenshot" width="800">
 
 **Interpretation:** NTILE(4) divides customers into equal-sized quartiles based on spending, creating balanced segments for targeted marketing. Premium customers (Q4) receive exclusive offers, while Entry Level (Q1) customers get acquisition-focused campaigns to increase engagement.
 
 #### Query 4.2: CUME_DIST() Cumulative distribution analysis
 **Use case:** Percentile ranking for performance benchmarking
 
-![CUME_DIST Screenshot](Screenshot/distribution_cume_dist_percentiles.png)
+<img src="Screenshot/distribution_cume_dist_percentiles.png" alt="CUME_DIST Screenshot" width="800">
 
 **Interpretation:** CUME_DIST() provides precise percentile rankings from 0 to 1, showing what percentage of products perform below each item. Products in top 20% (≥0.8) are star performers deserving premium shelf space and marketing investment.
 
 #### Query 4.3: Combined NTILE() and CUME_DIST() Complete distribution analysis
 **Use case:** Comprehensive customer segmentation combining quartiles and percentiles
 
-![Combined Distribution Screenshot](Screenshot/distribution_combined_analysis.png)
+<img src="Screenshot/distribution_combined_analysis.png" alt="Combined Distribution Screenshot" width="800">
 
 **Interpretation:** Combined distribution analysis reveals customer behavior patterns across multiple dimensions. High-spending, high-frequency customers in Q4 quartiles represent ideal customer profile, while mismatched quartiles (high spend, low frequency) indicate different engagement strategies needed.
 
@@ -264,7 +264,7 @@ v Many Transactions
 **Summary analysis combining all window function categories**
 **Use case:** Executive dashboard with complete analytical overview
 
-![Comprehensive Business Summary Screenshot](Screenshot/comprehensive_business_summary.png)
+<img src="Screenshot/comprehensive_business_summary.png" alt="Comprehensive Business Summary Screenshot" width="800">
 
 **Interpretation:** This executive summary demonstrates all four window function categories working together to provide complete regional performance analysis. Rankings identify top regions, aggregates show cumulative impact, and distributions reveal relative performance positioning for strategic decision-making.
 
@@ -419,6 +419,3 @@ The window function implementation demonstrates not only technical mastery but a
 8. Kotler, Philip, & Keller, Kevin Lane. (2024). Marketing Management. https://www.pearson.com/en-us/subject-catalog/p/marketing-management/P200000003484
 9. Kimball, Ralph, & Ross, Margy. (2023). The Data Warehouse Toolkit. https://www.wiley.com/en-us/The+Data+Warehouse+Toolkit%3A+The+Definitive+Guide+to+Dimensional+Modeling%2C+3rd+Edition-p-9781118530801
 10. Silberschatz, Abraham, et al. (2024). Database System Concepts. https://www.mheducation.com/highered/product/database-system-concepts-silberschatz-galvin/M9781260084504.html
-
-
-
