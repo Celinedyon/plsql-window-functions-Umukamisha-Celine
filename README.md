@@ -203,7 +203,7 @@ v Many Transactions
 #### Query 2.2: AVG() OVER() Moving averages with ROWS vs RANGE
 **Use case:** Smooth out daily sales fluctuations for trend analysis
 
-![AVG OVER Screenshot](Screenshot/aggregate%20avg.png)
+![AVG OVER Screenshot](Screenshot/aggregate%20avg.PNG)
 
 **Interpretation:** ROWS-based moving averages smooth transaction-level volatility by averaging fixed number of records, while RANGE-based averages use time periods regardless of transaction count. Three-day averages reveal underlying sales trends by filtering out daily fluctuations.
 
