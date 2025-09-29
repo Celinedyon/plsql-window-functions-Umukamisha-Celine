@@ -420,5 +420,6 @@ The window function implementation demonstrates not only technical mastery but a
 9. Kimball, Ralph, & Ross, Margy. (2023). The Data Warehouse Toolkit. https://www.wiley.com/en-us/The+Data+Warehouse+Toolkit%3A+The+Definitive+Guide+to+Dimensional+Modeling%2C+3rd+Edition-p-9781118530801
 10. Silberschatz, Abraham, et al. (2024). Database System Concepts. https://www.mheducation.com/highered/product/database-system-concepts-silberschatz-galvin/M9781260084504.html
 
+"All sources were properly cited. Implementations and analysis represent original work. No AI-generated content was copied without attribution or adaptation."
 
 
